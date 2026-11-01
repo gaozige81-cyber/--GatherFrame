@@ -1,0 +1,14 @@
+// Arbitrary web URLs are restricted independently from trusted source APIs.
+export function publicHost(host:string){host=host.toLowerCase().replace(/^\[|\]$/g,'').replace(/\.$/,'');if(!host||host==='localhost'||/\.(localhost|local|internal|test|invalid|example|onion)$/.test(host))return false;
+ if(host.includes(':'))return /^[23][\da-f]{3}:/.test(host)&&!/^2001:(?:db8|0|10|20):/i.test(host)&&!host.startsWith('2002:');
+ if(/^\d+\.\d+\.\d+\.\d+$/.test(host)){const n=host.split('.').map(Number);return n.every(v=>v>=0&&v<=255)&&![0,10,127].includes(n[0])&&n[0]<224&&!(n[0]===100&&n[1]>=64&&n[1]<=127)&&!(n[0]===169&&n[1]===254)&&!(n[0]===172&&n[1]>=16&&n[1]<=31)&&!(n[0]===192&&(n[1]===168||n[1]===0||n[1]===2))&&!(n[0]===198&&(n[1]===18||n[1]===19||n[1]===51))&&!(n[0]===203&&n[1]===0&&n[2]===113)}
+ return host.includes('.')&&/^[a-z\d.-]+$/.test(host);
+}
+export function publicUrl(raw:string){const u=new URL(raw);if(!['http:','https:'].includes(u.protocol)||u.username||u.password||(u.port&&!['80','443'].includes(u.port))||!publicHost(u.hostname))throw new Error('仅支持公共网站的 HTTP/HTTPS 地址，不能读取本机或内网');u.hash='';if(u.href.length>4096)throw new Error('地址过长');return u}
+declare global {var __shicaiSafeFetch:undefined|((url:string,init:RequestInit)=>Promise<Response>)}
+async function checkedFetch(url:URL,init:RequestInit){if(globalThis.__shicaiSafeFetch)return globalThis.__shicaiSafeFetch(url.href,init);
+ // Worker runtime: resolve both address families before every request and redirect.
+ if(!/^[\d.]+$/.test(url.hostname)&&!url.hostname.includes(':')){const results=await Promise.all(['A','AAAA'].map(async type=>{const r=await fetch('https://cloudflare-dns.com/dns-query?'+new URLSearchParams({name:url.hostname,type}),{headers:{Accept:'application/dns-json'},signal:AbortSignal.timeout(8000)});if(!r.ok)throw new Error('无法安全解析此网站');return r.json() as Promise<{Status:number;Answer?:{type:number;data:string}[]}>}));if(results.some(d=>![0,3].includes(d.Status)))throw new Error('网站域名解析失败');const addresses=results.flatMap(d=>d.Answer||[]).filter(a=>[1,28].includes(a.type));if(!addresses.length||addresses.some(a=>!publicHost(a.data)))throw new Error('网站地址不属于可访问的公共网络')}
+ return fetch(url.href,init);
+}
+export async function publicFetch(raw:string,accept:string){let u=publicUrl(raw);for(let hop=0;hop<4;hop++){const r=await checkedFetch(u,{headers:{Accept:accept,'User-Agent':'ShiCai/2.0 (public image collector)'},redirect:'manual',signal:AbortSignal.timeout(18000)});if(![301,302,303,307,308].includes(r.status)){if(!r.ok){await r.body?.cancel();throw new Error(`来源返回 ${r.status}，请打开来源页检查访问权限`)}return{response:r,url:u.href}}const location=r.headers.get('location');await r.body?.cancel();if(!location)throw new Error('网站重定向无效');u=publicUrl(new URL(location,u).href)}throw new Error('网站重定向次数过多')}

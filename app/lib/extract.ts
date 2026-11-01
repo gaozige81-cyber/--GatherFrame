@@ -1,0 +1,11 @@
+import type {Asset} from './assets';
+import {publicUrl} from './public-fetch';
+const decode=(s:string)=>s.replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&#(x[\da-f]+|\d+);/gi,(_,n)=>{const code=n[0].toLowerCase()==='x'?parseInt(n.slice(1),16):Number(n);return code>0&&code<=0x10ffff?String.fromCodePoint(code):''});
+function attributes(tag:string){const attrs:Record<string,string>={};for(const m of tag.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g))attrs[m[1].toLowerCase()]=decode(m[2]??m[3]??m[4]??'');return attrs}
+export function extractImages(html:string,page:string){html=html.replace(/<!--[\s\S]*?-->|<script\b[^>]*>[\s\S]*?<\/script\s*>|<style\b[^>]*>[\s\S]*?<\/style\s*>/gi,'');const results:Asset[]=[];const seen=new Set<string>();let base=page;const baseTag=html.match(/<base\b[^>]*>/i);if(baseTag){try{base=publicUrl(new URL(attributes(baseTag[0]).href,page).href).href}catch{}}
+ const add=(raw:string,title:string,w=0,h=0)=>{try{const u=publicUrl(new URL(raw.trim(),base).href);if(seen.has(u.href)||results.length>=80)return;seen.add(u.href);const format=u.pathname.match(/\.(png|jpe?g|webp|gif)$/i)?.[1].toUpperCase().replace('JPEG','JPG')||'待检测';results.push({id:'web-'+results.length,source:'web',url:u.href,title:(title||decodeURIComponent(u.pathname.split('/').pop()||'网页图片')).replace(/<[^>]*>/g,'').slice(0,180),creator:'作者见来源页',width:w,height:h,format,license:'待核验授权',licenseUrl:'',page,attribution:`网页收集 · ${page}\n图片地址 · ${u.href}`})}catch{}};
+ for(const match of html.matchAll(/<(img|source|a|meta)\b[^>]*>/gi)){const tag=match[1].toLowerCase(),a=attributes(match[0]);if(tag==='meta'){if(['og:image','og:image:url','twitter:image'].includes(a.property||a.name))add(a.content,'页面封面');continue}if(tag==='a'){if(/\.(png|jpe?g|webp|gif)(?:[?#]|$)/i.test(a.href||''))add(a.href,a.title||'链接原图');continue}
+ const srcset=a['data-srcset']||a.srcset;if(srcset){const candidates=srcset.split(',').map(s=>s.trim().split(/\s+/)).sort((x,y)=>parseFloat(y[1]||'1')-parseFloat(x[1]||'1'));if(candidates[0]?.[0])add(candidates[0][0],a.alt||a.title||'响应式大图')}
+ const src=a['data-original']||a['data-full']||a['data-large']||a['data-lazy-src']||a['data-src']||a.src;if(src)add(src,a.alt||a.title||'',Number(a.width)||0,Number(a.height)||0);
+ }return results;
+}

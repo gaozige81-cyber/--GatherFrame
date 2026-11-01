@@ -1,0 +1,291 @@
+{
+  "checkedAt": "2026-10-31",
+  "providers": [
+    {
+      "id": "openai",
+      "name": "OpenAI · GPT Image",
+      "hint": "选择模型后填写自己的 OpenAI 密钥。",
+      "keyUrl": "https://platform.openai.com/api-keys",
+      "docs": "https://developers.openai.com/api/docs/guides/image-generation",
+      "plan": {
+        "baseUrl": "https://api.openai.com/v1/",
+        "model": "gpt-4.1-mini",
+        "protocol": "responses",
+        "jsonMode": "schema"
+      },
+      "image": {
+        "baseUrl": "https://api.openai.com/v1/",
+        "model": "gpt-image-2.5-flare",
+        "protocol": "openai-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "gpt-image-2.5-flare",
+        "gpt-image-2.5-sunburst",
+        "gpt-image-2"
+      ]
+    },
+    {
+      "id": "gemini",
+      "name": "Google · Gemini / Nano Banana",
+      "hint": "使用 Google AI Studio 密钥，软件处理原生图像接口。",
+      "keyUrl": "https://aistudio.google.com/api-keys",
+      "docs": "https://ai.google.dev/gemini-api/docs/image-generation",
+      "image": {
+        "baseUrl": "https://generativelanguage.googleapis.com/v1beta/",
+        "model": "gemini-nano-banana-2.1",
+        "protocol": "gemini-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "gemini-nano-banana-2.1",
+        "gemini-3.1-flash-image",
+        "gemini-3-pro-image"
+      ]
+    },
+    {
+      "id": "seedream",
+      "name": "豆包 · Seedream（火山方舟）",
+      "hint": "使用方舟 API 密钥；也可在高级设置填自己的推理接入点 ID。",
+      "keyUrl": "https://ark.volcengine.com/region:cn-beijing/apikey",
+      "docs": "https://console.volcengine.com/ark/region%3Acn-beijing/docs/image-generation-api",
+      "image": {
+        "baseUrl": "https://ark.cn-beijing.volces.com/api/v3/",
+        "model": "doubao-seedream-5-0-lite-260128",
+        "protocol": "seedream-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "doubao-seedream-5-0-lite-260128",
+        "doubao-seedream-4-5-251128",
+        "doubao-seedream-4-0-250828"
+      ]
+    },
+    {
+      "id": "qwen",
+      "name": "阿里云百炼 · 千问图像",
+      "hint": "默认北京地域；密钥需与地域匹配，专属业务空间地址可在高级设置修改。",
+      "keyUrl": "https://bailian.console.aliyun.com/",
+      "docs": "https://help.aliyun.com/en/model-studio/qwen-image-generation-and-editing-api-reference",
+      "plan": {
+        "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1/",
+        "model": "qwen-plus",
+        "protocol": "chat",
+        "jsonMode": "prompt"
+      },
+      "image": {
+        "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1/",
+        "model": "qwen-image-3.0",
+        "protocol": "compatible-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "qwen-image-3.0",
+        "qwen-image-3.0-pro",
+        "qwen-image-2.1-turbo"
+      ]
+    },
+    {
+      "id": "siliconflow",
+      "name": "硅基流动 · Kolors / 千问图像",
+      "hint": "选用账户已开通的模型；可在高级设置读取更多模型。",
+      "keyUrl": "https://cloud.siliconflow.cn/account/ak",
+      "docs": "https://docs.siliconflow.cn/docs/api/images-generations-post",
+      "plan": {
+        "baseUrl": "https://api.siliconflow.cn/v1/",
+        "model": "deepseek-ai/DeepSeek-V3.2",
+        "protocol": "chat",
+        "jsonMode": "prompt"
+      },
+      "image": {
+        "baseUrl": "https://api.siliconflow.cn/v1/",
+        "model": "Kwai-Kolors/Kolors",
+        "protocol": "siliconflow-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "Kwai-Kolors/Kolors",
+        "Qwen/Qwen-Image"
+      ]
+    },
+    {
+      "id": "bfl",
+      "name": "Black Forest Labs · FLUX",
+      "hint": "支持官方异步生成，提交一次后自动查询结果。",
+      "keyUrl": "https://dashboard.bfl.ai/",
+      "docs": "https://docs.bfl.ai/quick_start/generating_images",
+      "image": {
+        "baseUrl": "https://api.bfl.ai/v1/",
+        "model": "flux-2-pro",
+        "protocol": "bfl-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "flux-2-pro",
+        "flux-2-klein-4b",
+        "flux-kontext-pro"
+      ]
+    },
+    {
+      "id": "ideogram",
+      "name": "Ideogram",
+      "hint": "适合图文设计。使用官方 API Key，软件处理表单参数。",
+      "keyUrl": "https://ideogram.ai/manage-api",
+      "docs": "https://developer.ideogram.ai/v2/api-reference/images/generate/ideogram-3",
+      "image": {
+        "baseUrl": "https://api.ideogram.ai/v2/image/generate/",
+        "model": "ideogram-3",
+        "protocol": "ideogram-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "ideogram-3"
+      ]
+    },
+    {
+      "id": "recraft",
+      "name": "Recraft",
+      "hint": "默认使用位图模型，可直接保存到拾材。",
+      "keyUrl": "https://www.recraft.ai/profile/api",
+      "docs": "https://www.recraft.ai/docs/api-reference/endpoints",
+      "image": {
+        "baseUrl": "https://external.api.recraft.ai/v1/",
+        "model": "recraftv4_1",
+        "protocol": "compatible-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "recraftv4_1",
+        "recraftv4",
+        "recraftv3"
+      ]
+    },
+    {
+      "id": "stability",
+      "name": "Stability AI · Stable Image",
+      "hint": "使用 Stability API 密钥，返回 PNG 图片。",
+      "keyUrl": "https://platform.stability.ai/account/keys",
+      "docs": "https://docs.stability.ai/api-reference",
+      "image": {
+        "baseUrl": "https://api.stability.ai/v2beta/",
+        "model": "core",
+        "protocol": "stability-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "core",
+        "ultra"
+      ]
+    },
+    {
+      "id": "grok",
+      "name": "xAI · Grok Imagine",
+      "hint": "使用 xAI 控制台密钥，与 Grok 网页订阅分别计费。",
+      "keyUrl": "https://console.x.ai/",
+      "docs": "https://docs.x.ai/developers/model-capabilities/images/generation",
+      "image": {
+        "baseUrl": "https://api.x.ai/v1/",
+        "model": "grok-imagine-image-2.0",
+        "protocol": "grok-image",
+        "jsonMode": "prompt"
+      },
+      "models": [
+        "grok-imagine-image-2.0",
+        "grok-imagine-image"
+      ]
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek（策划）",
+      "hint": "文字策划服务，生图需另选图像模型。",
+      "keyUrl": "https://platform.deepseek.com/",
+      "docs": "https://api-docs.deepseek.com/",
+      "plan": {
+        "baseUrl": "https://api.deepseek.com/",
+        "model": "deepseek-flash",
+        "protocol": "chat",
+        "jsonMode": "prompt"
+      }
+    },
+    {
+      "id": "custom",
+      "name": "自定义服务",
+      "hint": "可手动填写地址、模型与接口类型。",
+      "plan": {
+        "baseUrl": "",
+        "model": "",
+        "protocol": "chat",
+        "jsonMode": "prompt"
+      },
+      "image": {
+        "baseUrl": "",
+        "model": "",
+        "protocol": "compatible-image",
+        "jsonMode": "prompt"
+      },
+      "models": []
+    }
+  ],
+  "web": [
+    {
+      "id": "jimeng",
+      "name": "即梦",
+      "description": "中文创作与图片设计",
+      "url": "https://jimeng.jianying.com/"
+    },
+    {
+      "id": "doubao",
+      "name": "豆包",
+      "description": "用中文描述画面",
+      "url": "https://www.doubao.com/chat/"
+    },
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT Images",
+      "description": "图片生成与编辑",
+      "url": "https://chatgpt.com/"
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini / Nano Banana",
+      "description": "图片创作与编辑",
+      "url": "https://gemini.google.com/"
+    },
+    {
+      "id": "wan",
+      "name": "通义万相",
+      "description": "中文图像与视频创作",
+      "url": "https://tongyi.aliyun.com/wan/"
+    },
+    {
+      "id": "firefly",
+      "name": "Adobe Firefly",
+      "description": "设计与创意素材",
+      "url": "https://firefly.adobe.com/"
+    },
+    {
+      "id": "midjourney",
+      "name": "Midjourney",
+      "description": "艺术与视觉探索",
+      "url": "https://www.midjourney.com/"
+    },
+    {
+      "id": "ideogram",
+      "name": "Ideogram",
+      "description": "文字与图形创作",
+      "url": "https://ideogram.ai/"
+    },
+    {
+      "id": "recraft",
+      "name": "Recraft",
+      "description": "插画与设计图形",
+      "url": "https://www.recraft.ai/"
+    },
+    {
+      "id": "grok",
+      "name": "Grok Imagine",
+      "description": "图片生成与编辑",
+      "url": "https://grok.com/"
+    }
+  ]
+}

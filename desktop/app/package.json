@@ -1,0 +1,9 @@
+{
+  "name": "shicai-desktop",
+  "productName": "拾材",
+  "version": "2.3.0",
+  "description": "素材准备与AI海报助手",
+  "main": "main.cjs",
+  "private": true,
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,4 @@
+import ts from 'typescript';import{mkdirSync,readFileSync,writeFileSync}from'node:fs';import path from'node:path';import{fileURLToPath}from'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+// Only server modules belong beside the native host. Client workers are Vite-built.
+for(const src of ['lib/assets','lib/image-bytes','lib/public-fetch','lib/extract','lib/network-error','api/search/route','api/media/route','api/extract/route']){const out=path.join(root,'desktop/app',src+'.mjs');mkdirSync(path.dirname(out),{recursive:true});let js=ts.transpile(readFileSync(path.join(root,'app',src+'.ts'),'utf8'),{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022});js=js.replace(/(from\s+['"])(\.[^'"]+)(['"])/g,(_,a,b,c)=>a+b+(path.extname(b)?'':'.mjs')+c);writeFileSync(out,js)}

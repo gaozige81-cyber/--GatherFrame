@@ -1,0 +1,5 @@
+import {networkError} from '../../lib/network-error';
+import {publicFetch} from '../../lib/public-fetch';
+import {readLimited} from '../../lib/image-bytes';
+import {extractImages} from '../../lib/extract';
+export async function GET(req:Request){const raw=new URL(req.url).searchParams.get('url')||'';try{const{response,url}=await publicFetch(raw,'text/html,application/xhtml+xml');if(!/^(text\/html|application\/xhtml\+xml)(?:;|$)/i.test(response.headers.get('content-type')||'')){await response.body?.cancel();return Response.json({error:'此地址不是网页，请粘贴包含图片的公开页面地址。'},{status:400})}const bytes=await readLimited(response,2*1024*1024),html=new TextDecoder().decode(bytes);const title=html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.replace(/<[^>]*>/g,'').trim().slice(0,180)||new URL(url).hostname;return Response.json({items:extractImages(html,url),page:url,title,note:'已提取公开 HTML 中的图片候选，最多80张。脚本加载、登录内容与防盗链图片可能无法收集。尺寸、格式与透明状态需下载检测后确认。'},{headers:{'Cache-Control':'no-store'}})}catch(e){return Response.json({error:networkError(e)},{status:400})}}

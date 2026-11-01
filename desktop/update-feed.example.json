@@ -1,0 +1,12 @@
+{
+  "version": "2.2.5",
+  "notes": "这是版本信息格式示例。请将 example.com 替换为你实际使用的公开下载地址。",
+  "releaseUrl": "https://example.com/shicai/releases/2.2.5",
+  "downloads": {
+    "win32-x64": "https://example.com/shicai/ShiCai-2.2.5-Windows-x64-Setup.exe",
+    "darwin-arm64": "https://example.com/shicai/ShiCai-2.2.5-macOS-arm64-Installer.zip",
+    "darwin-x64": "https://example.com/shicai/ShiCai-2.2.5-macOS-x64-Installer.zip",
+    "darwin-x64-legacy": "https://example.com/shicai/ShiCai-2.2.5-macOS-x64-Legacy-Installer.zip",
+    "darwin-arm64-bigsur": "https://example.com/shicai/ShiCai-2.2.5-macOS-arm64-BigSur-Installer.zip"
+  }
+}

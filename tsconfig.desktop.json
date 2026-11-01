@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "types": ["node"], "plugins": [], "incremental": false },
+  "include": ["app/page.tsx", "app/lib/**/*.ts", "app/ui/**/*.tsx", "desktop/renderer/main.tsx"],
+  "exclude": ["node_modules", ".next", "build", "examples"]
+}

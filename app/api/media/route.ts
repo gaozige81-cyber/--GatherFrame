@@ -1,0 +1,15 @@
+import {networkError} from '../../lib/network-error';
+import {jsonFetch} from '../../lib/assets';
+import {publicFetch,publicUrl} from '../../lib/public-fetch';
+import {imageType,readLimited} from '../../lib/image-bytes';
+const fail=(error:string,status=502)=>Response.json({error},{status});
+export async function GET(req:Request){const u=new URL(req.url),id=u.searchParams.get('id')||'',source=u.searchParams.get('source'),download=u.searchParams.get('download')==='1';try{let target='',name='asset',r:Response;
+ if(source==='web'){target=publicUrl(u.searchParams.get('url')||'').href;name=new URL(target).pathname.split('/').pop()||'网页图片';r=(await publicFetch(target,'image/png,image/jpeg,image/webp,image/gif')).response}
+ else{if(source==='commons'&&/^\d{1,12}$/.test(id)){const d=await jsonFetch('https://commons.wikimedia.org/w/api.php?'+new URLSearchParams({action:'query',format:'json',pageids:id,prop:'imageinfo',iiprop:'url|mime|size',iiurlwidth:'640'}));const p=(Object.values(d.query?.pages||{}) as any[])[0],i=p?.imageinfo?.[0];if(!i)return fail('素材已失效',404);target=download?i.url:(i.thumburl||i.url);name=p.title.replace(/^File:/,'');if(i.size>25*1024*1024&&download)return fail('源图超过25MB，请从来源页下载。',413)}
+ else if(source==='openverse'&&/^[a-f0-9-]{36}$/.test(id)){target=`https://api.openverse.org/v1/images/${id}/thumb/${download?'?full_size=true&compressed=false':''}`;name=`openverse-${id}`}
+ else if(source==='artic'&&/^\d{1,12}$/.test(id)){const d=await jsonFetch(`https://api.artic.edu/api/v1/artworks/${id}?fields=id,title,image_id,is_public_domain`),a=d.data;if(!a?.is_public_domain||!a.image_id)return fail('此作品没有可用的公有领域图片',404);target=`https://www.artic.edu/iiif/2/${encodeURIComponent(a.image_id)}/full/${download?'3000':'600'},/0/default.jpg`;name=a.title}
+ else return fail('素材参数不正确',400);
+ let response:Response|undefined;for(let hop=0;hop<4;hop++){const t=new URL(target);if(t.protocol!=='https:'||t.port||t.username||t.password||!['upload.wikimedia.org','thumb.wikimedia.org','commons.wikimedia.org','api.openverse.org','www.artic.edu'].includes(t.hostname))return fail('来源重定向超出支持的图片主机');response=await fetch(target,{headers:{'User-Agent':'ShiCaiAssetFinder/2.0 (image discovery)'},redirect:'manual',signal:AbortSignal.timeout(20000)});if(![301,302,303,307,308].includes(response.status))break;const location=response.headers.get('location');await response.body?.cancel();if(!location)return fail('来源重定向无效');target=new URL(location,target).href}if(!response?.ok)return fail(`来源暂时拒绝下载（${response?.status||'连接失败'}），请打开来源页重试。`);r=response;
+ }
+ const bytes=await readLimited(r,25*1024*1024),type=imageType(bytes);if(!type)return fail('文件内容不是支持的 PNG / JPG / WEBP / GIF 图片',415);name=name.replace(/\.[a-z\d]{1,5}$/i,'')+'.'+type.ext;const h:Record<string,string>={'Content-Type':type.mime,'X-Content-Type-Options':'nosniff','Cache-Control':download?'private, no-store':'private, max-age=3600'};if(download)h['Content-Disposition']="attachment; filename*=UTF-8''"+encodeURIComponent(name.replace(/[\r\n]/g,''));return new Response(bytes,{headers:h});
+ }catch(e){return fail(networkError(e))}}

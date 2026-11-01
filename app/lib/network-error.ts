@@ -1,0 +1,1 @@
+export function networkError(error:unknown){const message=error instanceof Error?error.message:'';if(/^[\u3400-\u9fff]/.test(message)&&message.length<=220)return message;if(/abort|timeout|timed out/i.test(message))return'读取来源超时，请稍后重试，或检查本机网络。';return'暂时无法读取来源，请确认地址公开可访问，稍后重试或打开来源页。'}
